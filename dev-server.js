@@ -20,6 +20,9 @@ express()
     .use('/', express.static(SRC_ROOT))
     .listen(3000);
 
+exec('npm run build-js');
+exec('npm run build-css');
+
 watch([ SRC_ROOT + '**/*.jsx' ], function(e) {
     exec('npm run build-js', function() {
         livereloadServer.refresh(e.path);
