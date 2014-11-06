@@ -7,7 +7,7 @@ var fs = require('fs'),
     livereload = require('livereload'),
     watch = require('glob-watcher'),
     apiProxy = httpProxy.createProxyServer(),
-    server = livereload.createServer();
+    livereloadServer = livereload.createServer();
 
 express()
     .get('/', function(req, res) {
@@ -22,12 +22,12 @@ express()
 
 watch([ SRC_ROOT + '**/*.jsx' ], function(e) {
     exec('npm run build-js', function() {
-        server.refresh(e.path);
+        livereloadServer.refresh(e.path);
     });
 });
 
 watch([ SRC_ROOT + '**/*.scss' ], function(e) {
     exec('npm run build-css', function() {
-        server.refresh(e.path);
+        livereloadServer.refresh(e.path);
     });
 });
