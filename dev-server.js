@@ -11,7 +11,7 @@ var fs = require('fs'),
 
 express()
     .get('/', function(req, res) {
-        var lr = '<script src="http://localhost:35729/livereload.js"></script>';
+        var lr = "<script>document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js\"></' + 'script>')</script>";
         res.send(fs.readFileSync(SRC_ROOT + 'index.html', 'utf8').replace('</body>', lr + '</body>'));
     })
     .get('/api/*', function(req, res) {
