@@ -14,7 +14,7 @@ express()
         var lr = "<script>document.write('<script src=\"http://' + (location.host || 'localhost').split(':')[0] + ':35729/livereload.js\"></' + 'script>')</script>";
         res.send(fs.readFileSync(SRC_ROOT + 'index.html', 'utf8').replace('</body>', lr + '</body>'));
     })
-    .get('/api/*', function(req, res) {
+    .all('/api/*', function(req, res) {
         apiProxy.web(req, res, { target: 'http://localhost:8080' });
     })
     .use('/', express.static(SRC_ROOT))
