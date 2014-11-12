@@ -20,17 +20,34 @@ express()
     .use('/', express.static(SRC_ROOT))
     .listen(3000);
 
-exec('npm run build-js');
-exec('npm run build-css');
+function log(string) {
+    console.log((new Date() + '').split(' ')[4], string);
+}
 
-watch([ SRC_ROOT + '**/*.jsx' ], function(e) {
-    exec('npm run build-js', function() {
-        livereloadServer.refresh(e.path);
-    });
+function onRebuild(changedFile) {
+    return function(err, stdout, stderr) {
+        if (err) {
+            log('[ERROR] ' + stderr);
+        } else if (changedFile) {
+            log('[REBUILT] ' + changedFile);
+            livereloadServer.refresh(changedFile);
+        }
+    };
+}
+
+// Initial build:
+
+exec('npm run build-js', onRebuild());
+exec('npm run build-css', onRebuild());
+
+// Rebuild on file changes:
+
+watch([ SRC_ROOT + '**/*.{js,jsx}' ], function(e) {
+    if (e.path !== path.normalize(SRC_ROOT + 'index.js')) {
+        exec('npm run build-js', onRebuild(e.path));
+    }
 });
 
 watch([ SRC_ROOT + '**/*.scss' ], function(e) {
-    exec('npm run build-css', function() {
-        livereloadServer.refresh(e.path);
-    });
+    exec('npm run build-css', onRebuild(e.path));
 });
